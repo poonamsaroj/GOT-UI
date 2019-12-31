@@ -1,101 +1,91 @@
-import React from 'react';
-import MaterialTable from 'material-table'; 
-// import { makeStyles } from '@material-ui/core/styles';
+import React, { Component } from 'react';
+// import MaterialTable from 'material-table'; 
 
-// const useStyles = makeStyles({
-//     table: {
-//       minWidth: 650,
-//     },
-// });
 
-export default function BattleTable() {
-    // const classes = useStyles();
-  const [state, setState] = React.useState({
-    columns: [
-        { 
-            title: 'Name', 
-            field: 'name', 
-            // cellStyle: {
-            //     backgroundColor: '#039be5',
-            //     color: '#FFF'
-            // } 
-        },
-        { 
-            title: 'Surname', 
-            field: 'surname' 
-        },
-        { 
-            title: 'Birth Year', 
-            field: 'birthYear', 
-            type: 'numeric' 
-        },
-        {
-            title: 'Birth Place',
-            field: 'birthCity',
-            lookup: { 
-                34: 'İstanbul', 
-                63: 'Şanlıurfa' 
-            },
-        },
-    ],
-    data: [
-        { 
-            name: 'Mehmet', 
-            surname: 'Baran', 
-            birthYear: 1987, 
-            birthCity: 63 
-        },
-        {
-            name: 'Zerya Betül',
-            surname: 'Baran',
-            birthYear: 2017,
-            birthCity: 34,
-        },
-    ],
-  });
+class BattleTable extends Component {
 
-  return (
-    <MaterialTable
-      title="Editable Example"
-      columns={state.columns}
-      data={state.data}
-      editable={{
-        onRowAdd: newData =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              setState(prevState => {
-                const data = [...prevState.data];
-                data.push(newData);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              if (oldData) {
-                setState(prevState => {
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
-            }, 600);
-          }),
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              setState(prevState => {
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-      }}
-    />
-  );
+  constructor(props){
+    super(props);
+    this.state = {
+      items: [],
+      isLoaded: false
+    }
+  }
+
+  componentDidMount(){
+    fetch('http://localhost:8000/notes')
+      .then(res => res.json())
+      .then(json => {
+        console.log(json[0]);
+         this.setState({
+            isLoaded: true,
+            items: json,
+         });
+      });
+  }
+comp
+  render(){
+    
+    let { isLoaded, items } = this.state;
+    
+    return (
+      <div>
+        {/* <div>{isLoaded}</div> */}
+        <div>
+          {
+            items.map(item => (
+              <div key={item._id}>
+                <h1>{item.title}</h1>
+                <h1>{item.content}</h1>
+              </div>
+            ))
+          };
+        </div>
+        {/* <MaterialTable
+          title="Editable Example"
+          columns={state.columns}
+          data={state.data}
+          editable={{
+            onRowAdd: newData =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  resolve();
+                  setState(prevState => {
+                    const data = [...prevState.data];
+                    data.push(newData);
+                    return { ...prevState, data };
+                  });
+                }, 600);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  resolve();
+                  if (oldData) {
+                    setState(prevState => {
+                      const data = [...prevState.data];
+                      data[data.indexOf(oldData)] = newData;
+                      return { ...prevState, data };
+                    });
+                  }
+                }, 600);
+              }),
+            onRowDelete: oldData =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  resolve();
+                  setState(prevState => {
+                    const data = [...prevState.data];
+                    data.splice(data.indexOf(oldData), 1);
+                    return { ...prevState, data };
+                  });
+                }, 600);
+              }),
+          }}
+        /> */}
+      </div>
+    );
+  }
 }
+
+export default BattleTable;
